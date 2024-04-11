@@ -1,4 +1,5 @@
 from layer import Layer
+from kernel import Kernel
 from typing_extensions import override
 import numpy as np
 
@@ -9,15 +10,16 @@ class Conv2D(Layer):
 
         # a dictionary with the string name of each activation function as the key and a 2 element list of lambda 
         # activation functions. The first function in the list is the activation function and the second element is the derivative
+        # TODO add real activation functions
         activation_funcs = {
             'relu': [lambda x: x, lambda x: 1]
         }
 
-        self.filters = filters
         self.kernel_size = kernel_size
         self.stride = stride
         self.activation = activation_funcs[activation]
         self.bias = bias
+        self.kernels = [Kernel((input_shape[0], kernel_size, kernel_size)) for _ in range(filters)]
 
     
 
