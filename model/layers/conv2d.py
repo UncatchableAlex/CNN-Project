@@ -1,5 +1,5 @@
 from layer import Layer
-from kernel import Kernel
+from kernel import Kernel # type: ignore[import-not-found] 
 from typing_extensions import override
 import numpy as np
 

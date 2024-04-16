@@ -3,8 +3,7 @@ from model.layers.layer import Layer # type: ignore[import-not-found]
 import numpy as np
 from typing_extensions import override
 
-# this is a class for describing fully-connected hidden layers
-class Dense(Layer):
+class Input(Layer):
     @override
     # input
     def __init__(self, input_shape, output_shape, nodes, w, activation='sigmoid', bias=0.0):
@@ -23,16 +22,11 @@ class Dense(Layer):
     @override
     def forward(self, input):
         self.input = input
-        self.input_activ = self.activation[0](input)
         # apply the activation function and return the forward operation as input to the next layer (if this layer is hidden)
-        return self.w.T @ self.input_activ
+        return self.w.T @ input
 
-    # grad_output has 1 row and n columns where n is the number of nodes in the next layer
-    # grad_output this is where we leave off for the night. we are concerned that grad_output is a 1d array that we are going to transpose and it will not end well
+    # grad_output has n row and 1 columns where n is the number of nodes in the next layer
+    # Nothing needs to be done for backpropagation for the input layer. It just has to update the weights
     @override
-    def backward(self, grad_output):        
-        # use the formula from the book
-        self.blame = self.activation[1](self.input) * (self.w @ grad_output)
-        # take a step in grad_output direction
-        self.w += 1.0 * grad_output * self.input_activ
-        return self.blame
+    def backward(self, grad_output):
+        self.w += 1.0 * grad_output * self.activation[0](self.input)
