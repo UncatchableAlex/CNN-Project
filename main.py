@@ -1,15 +1,10 @@
 from kernel import Kernel
+from model.layers.dense import Dense
 import numpy as np
 
-kern = Kernel((2, 2, 2))
-print(kern.weights)
-input_matrix = np.array(
-    [
-        [[1, 1, 4, 5], [2, 2, 8, 9], [9, 8, 7, 6], [5, 4, 3, 2]],
-        [[3, 3, 3, 5], [4, 4, 2, 4], [2, 4, 5, 6], [1, 4, 5, 6]],
-    ]
-)
-#print(kern.weights[0:2, 0:2] * input_matrix)
-#print(np.sum(input_matrix * kern.weights))
+w1 = np.array([
+    [0.1,0.4],
+    [0.8,0.6]
+])
 
-print(kern.convolve(input=input_matrix, stride=2))
+w2 = np.array([[0.3, 0.9]])
