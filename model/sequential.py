@@ -5,8 +5,9 @@ class Sequential:
         self.loss = None
         self.metrics = None
 
-    def compile(optimizer, loss, metrics):
-        pass
+    def compile(self, optimizer, loss):
+        self.loss = loss
+        self.optimizer = optimizer
 
     def _forward(input):
         pass
