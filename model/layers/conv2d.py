@@ -11,14 +11,18 @@ class Conv2D(Layer):
         self.stride = stride
         self.bias = bias
         self.kernels = [Kernel(shape=(input_shape[0], kernel_size, kernel_size), stride=stride) for _ in range(filters)]
-
     
+    
+    def compile(self,optimizer):
+        for k in self.kernels:
+            k.compile(optimizer)
 
     @override
     def forward(self, input):
-        return np.array([k.convolve(input) for k in self.kernels])
+        return np.array([k.forward_convolve(input) for k in self.kernels])
 
 
     @override
+    # input is a 4d tensor
     def backward(self, input):
-        pass
+        return [kern.backward_convolve(inp3d) for inp3d, kern in zip(input, self.kernels)]

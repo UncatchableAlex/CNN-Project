@@ -2,6 +2,7 @@
 from model.layers.layer import Layer # type: ignore[import-not-found] 
 import numpy as np
 from typing_extensions import override
+from model.optimizers.adam import Adam # type: ignore[import-not-found] 
 
 # this is a class for describing fully-connected hidden layers
 class Dense(Layer):
@@ -28,7 +29,10 @@ class Dense(Layer):
         return self.w.T @ self.input_activ
     
     def compile(self,optimizer):
-        self.optimizer = optimizer
+        if optimizer == 'adam':
+            self.optimizer = Adam()
+        else:
+            raise Exception('Unknown optimizer. Please use Adam')
 
     # grad_output has 1 row and n columns where n is the number of nodes in the next layer
     # grad_output this is where we leave off for the night. we are concerned that grad_output is a 1d array that we are going to transpose and it will not end well
@@ -37,7 +41,8 @@ class Dense(Layer):
         # use the formula from the book
         self.blame = self.activation[1](self.input) * (self.w @ grad_output)
         # take a step in grad_output direction (these are the blames from the next layer)
-        #self.w += 1.0 * grad_output * self.input_activ
-        self.w += self.w @ self.optimizer.update(grad_output)
+        # this is exactly how adam does it in his notes. we are using a numpy trick to do a
+        # (n,1) * (1,m) = (n,m) broadcast.
+        #self.w += self.optimizer.update(grad_output.T * self.input_activ)
         # blame is a column vector with an element for every node in this layer
         return self.blame
