@@ -22,14 +22,16 @@ class Kernel:
             raise Exception('Unknown optimizer. Please use Adam')    
             
 
-    def forward_convolve(self, input):
-        return Kernel._convolve(input, self.weights, self.stride)
+    def forward_convolve(self, input_activ):
+        return Kernel._convolve(input_activ, self.weights, self.stride)
     
     # https://www.youtube.com/watch?v=Lakz2MoHy6o&t=1349s
-    def backward_convolve(self, input, grad_outputs):
-        weights_grad = Kernel._convolve(input, grad_outputs, stride=self.stride)
+    def backward_convolve(self, input_activ, grad_output):
+        weights_grad = np.array([Kernel._convolve(input_activ_2d[np.newaxis,:,:], grad_output[np.newaxis,:,:], stride=self.stride) for input_activ_2d in input_activ])
+        # update weights in kernel. 
         self.weights += self.optimizer.update(weights_grad)
-        padded_grad_outputs = np.pad(grad_outputs, pad_width=self.shape[1]-1)
+        # return the derivative of the loss function with respect to this layers input (the previous layer's output)
+        padded_grad_outputs = np.pad(grad_output, pad_width=self.shape[1]-1)
         rotated_weights = np.rot90(self.weights, k=2)
         return Kernel._convolve(padded_grad_outputs, rotated_weights, stride=self.stride)
 
@@ -38,7 +40,7 @@ class Kernel:
     @staticmethod
     def _convolve(input, weights, stride):
         if input.shape[0] != weights.shape[0]:
-            raise Exception(f'Weight channel count doesn\'t match Input channel count. Kernel shape: {weights.shape}  Input shape: {input.shape}')
+            raise Exception(f'Weight channel count doesn\'t match Input channel count. Weight shape: {weights.shape}  Input shape: {input.shape}')
 
         if input.shape[1] < weights.shape[1] or input.shape[2] < weights.shape[2]:
             raise Exception(f'Input bigger than weight. Weight shape: {weights.shape}  Input shape: {input.shape}')

@@ -19,10 +19,28 @@ class Conv2D(Layer):
 
     @override
     def forward(self, input):
-        return np.array([k.forward_convolve(input) for k in self.kernels])
+        self.input = input
+        self.input_activ = self.activation[0](input)
+        # convolve each kernel with result of the activation function and the input
+        return np.array([k.forward_convolve(self.input_activ) for k in self.kernels])
 
 
     @override
-    # input is a 4d tensor
-    def backward(self, input):
-        return [kern.backward_convolve(inp3d) for inp3d, kern in zip(input, self.kernels)]
+    # output_grads is a 4d tensor
+    # https://www.youtube.com/watch?v=Lakz2MoHy6o&t=1292s
+    # In the video, his variables are:
+    #  x -> self.input
+    #  y -> output_grads 
+    #  k-> self.kernels
+    def backward(self, output_grads):
+        return [self.activation[1](self.input) * kern.backward_convolve(self.input, output_grad) for kern, output_grad in zip(self.kernels, output_grads)]
+        #
+        # This sick one-liner is equivalent to the following imerative code:
+        #
+        # outputs = []
+        # for i in range(len(output_grads)):
+        #     output_grad = output_grads[i]
+        #     kern = self.kernels[i]
+        #     output = kern.backward_convolve(self.input, output_grad)
+        #     outputs.append(output)
+
