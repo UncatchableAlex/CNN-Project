@@ -1,6 +1,6 @@
 import numpy as np
 class Adam:
-    def __init__(self, beta1=0.9, beta2=0.999, alpha=0.01, epsilon=1e-8):
+    def __init__(self, beta1=0.9, beta2=0.999, alpha=0.1, epsilon=1e-8):
         # decay rate of the first moment
         self.beta1 = beta1
         # decay rate of the second moment

@@ -5,7 +5,7 @@ import numpy as np
 
 class Conv2D(Layer):
     @override
-    def __init__(self, input_shape, output_shape, filters, kernel_size, stride=1, activation='relu', bias=0.0):
+    def __init__(self, input_shape, output_shape, filters, kernel_size, stride=1, activation='sigmoid', bias=0.0):
         super().__init__(input_shape, output_shape, activation)
         self.kernel_size = kernel_size
         self.stride = stride

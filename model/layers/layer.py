@@ -11,7 +11,7 @@ class Layer(ABC):
         # TODO add real activation functions
         sig = lambda x: 1/(1+np.exp(-x))
         activation_funcs = {
-            'relu': [lambda x: x, lambda x: 1],
+         #   'relu': [lambda x: x, lambda x: 1],
             'sigmoid': [sig, lambda x:  sig(x)*(1-sig(x))]
         }
         self.activation = activation_funcs[activation]

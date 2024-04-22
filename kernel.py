@@ -31,9 +31,10 @@ class Kernel:
         # update weights in kernel. 
         self.weights += self.optimizer.update(weights_grad)
         # return the derivative of the loss function with respect to this layers input (the previous layer's output)
-        padded_grad_outputs = np.pad(grad_output, pad_width=self.shape[1]-1)
+        padded_grad_outputs_2d = np.pad(grad_output, pad_width=self.shape[1]-1)
+        padded_grad_outputs_3d = np.array([padded_grad_outputs_2d] * self.weights.shape[0])
         rotated_weights = np.rot90(self.weights, k=2)
-        return Kernel._convolve(padded_grad_outputs, rotated_weights, stride=self.stride)
+        return Kernel._convolve(padded_grad_outputs_3d, rotated_weights, stride=self.stride)
 
         
     # input is a 3d numpy array (channels, rows, columns)

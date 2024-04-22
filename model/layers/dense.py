@@ -12,7 +12,7 @@ class Dense(Layer):
         super().__init__(input_shape, output_shape, activation)
         # each column represents the weights leading into a node in the next layer
         # each row represents the weights from a node in the last layer
-        self.w = np.random.uniform(-0.5, 0.5, (input_shape[0], output_shape[0]))
+        self.w = np.random.uniform(-1, 1, (input_shape[0], output_shape[0]))
         #self.w = w
         self.input_shape = input_shape
         self.output_shape = output_shape
