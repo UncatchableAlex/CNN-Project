@@ -1,4 +1,5 @@
 import numpy as np
+# https://arxiv.org/pdf/1412.6980.pdf
 class Adam:
     def __init__(self, beta1=0.9, beta2=0.999, alpha=0.1, epsilon=1e-8):
         # decay rate of the first moment

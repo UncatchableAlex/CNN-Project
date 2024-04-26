@@ -33,9 +33,23 @@ class Conv2D(Layer):
     #  y -> output_grads 
     #  k-> self.kernels
     def backward(self, output_grads):
-        return [self.activation[1](self.input) * kern.backward_convolve(self.input, output_grad) for kern, output_grad in zip(self.kernels, output_grads)]
+        blame = np.zeros_like(self.input)
+        for j in range(blame.shape[0]):
+            blame[j] = np.sum(np.array([kern.channel_blame(j, output_grad) for kern, output_grad in zip(self.kernels, output_grads)]), axis=0)
+        
+        # for each kernel and it's associated output gradient, update the weights
+        for kern, output_grad in zip(self.kernels, output_grads):
+            kern.update_weights(self.input_activ, output_grad)
+        
+        return self.activation[1](self.input) * blame
+                
+
+
+
+        arr = np.array([kern.backward_convolve(self.input_activ, output_grad) for kern, output_grad in zip(self.kernels, output_grads)])
+        return self.activation[1](self.input) * arr
         #
-        # This sick one-liner is equivalent to the following imerative code:
+        # This sick one-liner is equivalent to the following imperative code:
         #
         # outputs = []
         # for i in range(len(output_grads)):

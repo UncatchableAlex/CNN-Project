@@ -25,19 +25,21 @@ class Kernel:
     def forward_convolve(self, input_activ):
         return Kernel._convolve(input_activ, self.weights, self.stride)
     
+
+    def channel_blame(self, channel, grad_output):
+        padded_grad_output = np.pad(grad_output, pad_width=self.shape[1] - 1)[np.newaxis, :, :]
+        channel_weight_rot = np.rot90(self.weights[channel], k=2)[np.newaxis, :, :]
+        return Kernel._convolve(padded_grad_output, channel_weight_rot, stride=self.stride)
+
+    
     # https://www.youtube.com/watch?v=Lakz2MoHy6o&t=1349s
-    def backward_convolve(self, input_activ, grad_output):
-        weights_grad = np.array([Kernel._convolve(input_activ_2d[np.newaxis,:,:], grad_output[np.newaxis,:,:], stride=self.stride) for input_activ_2d in input_activ])
+    def update_weights(self, input_activ, output_grad):
+        weights_grad = np.array([Kernel._convolve(input_activ_2d[np.newaxis,:,:], output_grad[np.newaxis,:,:], stride=self.stride) for input_activ_2d in input_activ])
         # update weights in kernel. 
         self.weights += self.optimizer.update(weights_grad)
-        # return the derivative of the loss function with respect to this layers input (the previous layer's output)
-        padded_grad_outputs_2d = np.pad(grad_output, pad_width=self.shape[1]-1)
-        padded_grad_outputs_3d = np.array([padded_grad_outputs_2d] * self.weights.shape[0])
-        rotated_weights = np.rot90(self.weights, k=2)
-        return Kernel._convolve(padded_grad_outputs_3d, rotated_weights, stride=self.stride)
-
         
     # input is a 3d numpy array (channels, rows, columns)
+    # output is a 2d numpy array (rows, columns)
     @staticmethod
     def _convolve(input, weights, stride):
         if input.shape[0] != weights.shape[0]:
