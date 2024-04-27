@@ -19,9 +19,7 @@ class MaxPool2D(Layer):
         
         self.stride = stride
         self.pool_size = pool_size
-        self.positions = None  
-        self.output = None
-        self.blames = None
+        self.blames = np.zeros(self.input_shape)
         self.output = np.zeros(output_shape)
         self.positions = np.zeros(self.output.shape, dtype=(int, 3))
     
@@ -47,19 +45,16 @@ class MaxPool2D(Layer):
                     self.positions[k,i,j,1] += row_start
                     self.positions[k,i,j,2] += col_start
         return self.output
-        
 
 
     @override
     def backward(self, output_grads):
-        # recycle our old blames matrix if possible
-        blames = np.zeros(self.input_shape) if self.blames == None else self.blames
         # this is a matrix of the channel coordinates for each of the max values that we outputed upon forward prop
         channel_pos = self.positions[:, :, :, 0]
         # and a matrix for the row coordinates
         row_pos = self.positions[:, :, :, 1]
         # and a matrix for the col coordinates
         col_pos = self.positions[:, :, :, 2]
-        blames[channel_pos, row_pos, col_pos] = output_grads
-        return blames
+        self.blames[channel_pos, row_pos, col_pos] = output_grads
+        return self.blames
 

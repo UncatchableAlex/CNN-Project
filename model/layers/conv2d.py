@@ -6,14 +6,14 @@ import numpy as np
 
 class Conv2D(Layer):
     @override
-    def __init__(self, input_shape, output_shape, filters, kernel_size, stride=1, activation='sigmoid', bias=0.0):
+    def __init__(self, input_shape, output_shape, filters, kernel_size, stride=1, activation='sigmoid', bias=0.01):
         super().__init__(input_shape, output_shape, activation)
         self.kernel_size = kernel_size
         self.stride = stride
         self.bias = bias
         self.kernels = [Kernel(shape=(input_shape[0], kernel_size, kernel_size), stride=stride) for _ in range(filters)]
         self.blame = None
-        self.bias = np.full(output_shape, 0.01)
+        self.bias = np.full(output_shape, bias)
         self.output = np.zeros(output_shape)
     
     

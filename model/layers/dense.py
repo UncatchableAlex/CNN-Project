@@ -8,14 +8,14 @@ from model.optimizers.adam import Adam # type: ignore[import-not-found]
 class Dense(Layer):
     @override
     # input
-    def __init__(self, input_shape, output_shape, activation='sigmoid', bias=0.0):
+    def __init__(self, input_shape, output_shape, activation='sigmoid', bias=0.01):
         super().__init__(input_shape, output_shape, activation)
         # each column represents the weights leading into a node in the next layer
         # each row represents the weights from a node in the last layer
       #  self.w = np.random.uniform(-1, 1, (input_shape[0], output_shape[0]))
         self.w = np.full((input_shape[0], output_shape[0]), 0.01)
         # add a bias term
-        self.b = np.full(output_shape, 0.001)
+        self.b = np.full(output_shape, bias)
         #self.w = w
         self.input_shape = input_shape
         self.output_shape = output_shape

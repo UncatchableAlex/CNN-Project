@@ -1,7 +1,7 @@
 import numpy as np
 # https://arxiv.org/pdf/1412.6980.pdf
 class Adam:
-    def __init__(self, beta1=0.8, beta2=0.9, alpha=0.001, epsilon=1e-6):
+    def __init__(self, beta1=0.9, beta2=0.99, alpha=0.001, epsilon=1e-6):
         # decay rate of the first moment
         self.beta1 = beta1
         # decay rate of the second moment
