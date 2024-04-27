@@ -12,14 +12,15 @@ class Kernel:
             raise Exception(f'Stride cannot be negative. Given stride {stride}')
         self.shape = shape
         self.stride = stride
-        self.weights = np.random.uniform(low=-1, high=1, size=shape)
+      #  self.weights = np.random.uniform(low=-1, high=1, size=shape)
+        self.weights = np.full(shape, 0.01)
     
 
-    def compile(self,optimizer):
-        if optimizer == 'adam':
-            self.optimizer = Adam()
+    def compile(self,w_optimizer):
+        if w_optimizer == 'adam':
+            self.w_optimizer = Adam()
         else:
-            raise Exception('Unknown optimizer. Please use Adam')    
+            raise Exception('Unknown w_optimizer. Please use Adam')    
             
 
     def forward_convolve(self, input_activ):
@@ -36,7 +37,7 @@ class Kernel:
     def update_weights(self, input_activ, output_grad):
         weights_grad = np.array([Kernel._convolve(input_activ_2d[np.newaxis,:,:], output_grad[np.newaxis,:,:], stride=self.stride) for input_activ_2d in input_activ])
         # update weights in kernel. 
-        self.weights += self.optimizer.update(weights_grad)
+        self.weights += self.w_optimizer.update(weights_grad)
         
     # input is a 3d numpy array (channels, rows, columns)
     # output is a 2d numpy array (rows, columns)

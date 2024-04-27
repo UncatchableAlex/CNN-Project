@@ -8,11 +8,11 @@ class Layer(ABC):
         self.output_shape = output_shape
         # a dictionary with the string name of each activation function as the key and a 2 element list of lambda 
         # activation functions. The first function in the list is the activation function and the second element is the derivative
-        # TODO add real activation functions
         sig = lambda x: 1/(1+np.exp(-x))
         activation_funcs = {
-         #   'relu': [lambda x: x, lambda x: 1],
-            'sigmoid': [sig, lambda x:  sig(x)*(1-sig(x))]
+            'relu': [lambda x: np.maximum(x, 0.0), lambda x: np.where(x > 0, 1.0, 0.0)],
+            'sigmoid': [sig, lambda x:  sig(x)*(1-sig(x))],
+            '': None
         }
         self.activation = activation_funcs[activation]
 
