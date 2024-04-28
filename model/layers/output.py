@@ -19,3 +19,5 @@ class Output(Layer):
         self.blame = self.loss_func(model_output)
         return self.blame
 
+    def compile(self,optimizer):
+        pass

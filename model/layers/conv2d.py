@@ -56,3 +56,5 @@ class Conv2D(Layer):
         #print(np.max(np.abs(self.bias)))
         
         return self.activation[1](self.input) * self.blame
+
+    

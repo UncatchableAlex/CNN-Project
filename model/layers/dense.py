@@ -20,6 +20,7 @@ class Dense(Layer):
         self.input_shape = input_shape
         self.output_shape = output_shape
 
+
         
     # input is a column vector with n inputs, one for each node in the layer
     # returns a column vector which should serve as input to the next layer

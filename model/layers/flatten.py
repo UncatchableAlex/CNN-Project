@@ -17,3 +17,6 @@ class Flatten(Layer):
     def backward(self, grad_output):
         # return our column vector grad_output as a matrix:
         return grad_output.reshape(self.input_shape)
+    
+    def compile(self, optimizer):
+        pass
