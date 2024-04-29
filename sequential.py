@@ -24,6 +24,9 @@ class Sequential:
     def compile(self,optimizer):
         for layer in self.layers:
             layer.compile(optimizer=optimizer)
+
+    def save(self):
+        pass
             
             
     
