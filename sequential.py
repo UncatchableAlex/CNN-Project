@@ -48,9 +48,11 @@ class Sequential:
 
         # Prepare data lists
         filenames = [os.path.basename(file) for file in all_image_files]
-        classes = [1 if identifier in filename else 0 for filename in filenames]
+        classes = [1.0 if identifier in filename else 0.0 for filename in filenames]
         images = [np.array(Image.open(file).convert('RGB')) / 255.0 for file in all_image_files]  # Normalize and ensure RGB
 
+        images = [image.transpose(2, 0, 1) for image in images]
+        
         # Split into train and validation sets
         train_images, validation_images, train_labels, validation_labels = train_test_split(
             images, classes, test_size=0.2, random_state=32

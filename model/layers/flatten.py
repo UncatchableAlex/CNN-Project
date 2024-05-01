@@ -5,7 +5,7 @@ import numpy as np
 
 class Flatten(Layer):
     @override
-    def __init__(self, input_shape, output_shape):
+    def __init__(self, input_shape, output_shape,activation):
         super().__init__(input_shape, output_shape, '')
 
     @override
