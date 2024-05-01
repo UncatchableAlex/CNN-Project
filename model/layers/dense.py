@@ -9,6 +9,7 @@ class Dense(Layer):
     @override
     # input
     def __init__(self, input_shape, output_shape, activation='sigmoid', bias=0.01):
+        self.activation_label = activation
         super().__init__(input_shape, output_shape, activation)
         # each column represents the weights leading into a node in the next layer
         # each row represents the weights from a node in the last layer

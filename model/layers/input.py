@@ -6,7 +6,7 @@ from typing_extensions import override
 class Input(Layer):
     @override
     # input
-    def __init__(self, input_shape, output_shape, nodes, w, activation='sigmoid', bias=0.0):
+    def __init__(self, input_shape, output_shape, w, activation='sigmoid'):
         super().__init__(input_shape, output_shape, activation)
         # each column represents the weights leading into a node in the next layer
         # each row represents the weights from a node in the last layer
@@ -22,7 +22,7 @@ class Input(Layer):
     @override
     def forward(self, input):
         self.input = input
-        # apply the activation function and return the forward operation as input to the next layer (if this layer is hidden)
+        # return the forward operation as input to the next layer (if this layer is hidden)
         return self.w.T @ input
 
     # grad_output has n row and 1 columns where n is the number of nodes in the next layer

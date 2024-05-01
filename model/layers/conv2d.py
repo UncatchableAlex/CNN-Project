@@ -7,6 +7,7 @@ import numpy as np
 class Conv2D(Layer):
     @override
     def __init__(self, input_shape, output_shape, filters, kernel_size, stride=1, activation='sigmoid', bias=0.01):
+        self.activation_label = activation
         super().__init__(input_shape, output_shape, activation)
         self.kernel_size = kernel_size
         self.stride = stride
