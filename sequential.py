@@ -1,17 +1,12 @@
 from model.layers.dense import Dense
 import os
-import sys
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split# type: ignore
 import glob
 import logging
-import pandas as pd
-from PIL import Image
-import numpy as np
-
+from PIL import Image# type: ignore
 from model.layers.conv2d import Conv2D
 from model.layers.maxpool2d import MaxPool2D
 from model.layers.flatten import Flatten
-from model.layers.input import Input
 from model.layers.output import Output
 from model.layers.dropout import DenseDropout, ConvDropout
 from kernel import Kernel
@@ -43,9 +38,7 @@ class Sequential:
         for layer in self.layers:
             layer.compile(optimizer=optimizer)
 
-    def save(self):
-        pass
-            
+
     def preprocess_dataset(self,data_dir, identifier):
         # Get all image file paths
         all_image_files = glob.glob(os.path.join(data_dir, '*.jpg'))
@@ -77,15 +70,7 @@ class Sequential:
                 output =self.forward(input, index=0)
                 print(output)
                 self.backward(output=output)
-            
-            
-            
-            
     
-            
-
-
-
 
     def save(self, file_name):
         f = h5py.File(file_name, 'a')
