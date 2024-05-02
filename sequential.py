@@ -39,7 +39,15 @@ class Sequential:
             layer.compile(optimizer=optimizer)
 
 
-    def preprocess_dataset(self,data_dir, identifier):
+    def preprocess_dataset(self,data_dir, identifier,map_dictionary):
+        # Get all image file paths
+        all_image_files = glob.glob(os.path.join(data_dir, '*.jpg'))
+        if not all_image_files:
+            logging.error("No image files found in the specified directory.")
+            return None, None, None, None
+
+        
+    def preprocess_dataset(self, data_dir, map_dictionary):
         # Get all image file paths
         all_image_files = glob.glob(os.path.join(data_dir, '*.jpg'))
         if not all_image_files:
@@ -48,17 +56,27 @@ class Sequential:
 
         # Prepare data lists
         filenames = [os.path.basename(file) for file in all_image_files]
-        classes = [1.0 if identifier in filename else 0.0 for filename in filenames]
-        images = [np.array(Image.open(file).convert('RGB')) / 255.0 for file in all_image_files]  # Normalize and ensure RGB
+        classes = []
+        for filename in filenames:
+            for identifier, label_vector in map_dictionary.items():
+                if identifier in filename:
+                    classes.append(label_vector)
+                    break
+            else:
+                logging.warning(f"No matching identifier found for file: {filename}")
+                classes.append([0.0] * len(next(iter(map_dictionary.values()))))
 
+        images = [np.array(Image.open(file).convert('RGB')) / 255.0 for file in all_image_files]
+        # Normalize and ensure RGB
         images = [image.transpose(2, 0, 1) for image in images]
-        
+
         # Split into train and validation sets
         train_images, validation_images, train_labels, validation_labels = train_test_split(
             images, classes, test_size=0.2, random_state=32
         )
 
         return train_images, train_labels, validation_images, validation_labels
+        
 
     def training(self,train_value,train_target,number_of_iteration):
         number_of_data =len(train_value)
