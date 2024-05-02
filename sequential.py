@@ -39,20 +39,12 @@ class Sequential:
             layer.compile(optimizer=optimizer)
 
 
-    def preprocess_dataset(self,data_dir, identifier,map_dictionary):
-        # Get all image file paths
-        all_image_files = glob.glob(os.path.join(data_dir, '*.jpg'))
-        if not all_image_files:
-            logging.error("No image files found in the specified directory.")
-            return None, None, None, None
-
-        
     def preprocess_dataset(self, data_dir, map_dictionary):
         # Get all image file paths
-        all_image_files = glob.glob(os.path.join(data_dir, '*.jpg'))
+        all_image_files = glob.glob(os.path.join(data_dir, '*.png'))
         if not all_image_files:
             logging.error("No image files found in the specified directory.")
-            return None, None, None, None
+            return None, None, None, None, None
 
         # Prepare data lists
         filenames = [os.path.basename(file) for file in all_image_files]
@@ -75,21 +67,29 @@ class Sequential:
             images, classes, test_size=0.2, random_state=32
         )
 
-        return train_images, train_labels, validation_images, validation_labels
-        
+        # Create indices array
+        indices = np.arange(len(train_images))
 
-    def training(self,train_value,train_target,number_of_iteration):
-        number_of_data =len(train_value)
+        return train_images, train_labels, validation_images, validation_labels, indices
+
+    def training(self, train_value, train_target, indices, number_of_iteration):
+        number_of_data = len(train_value)
         for j in range(number_of_iteration):
+            # Shuffle the indices array for each iteration
+            np.random.shuffle(indices)
             for i in range(number_of_data):
-                input=train_value[i]
-                
-                target=train_target[i]
-                #change the final output
-                self.layers[-1].target =target
-                output =self.forward(input, index=0)
+                # Use the shuffled indices to access training data
+                index = indices[i]
+                input = train_value[index]
+                target = train_target[index]
+                # Change the final output
+                self.layers[-1].target = target
+                output = self.forward(input, index=0)
                 print(output)
                 self.backward(output=output)
+        
+
+    
     
 
     def save(self, file_name):
