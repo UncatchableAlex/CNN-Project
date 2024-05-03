@@ -10,6 +10,14 @@ class Flatten(Layer):
 
     @override
     def forward(self, input):
+        """reshape the input
+
+        Args:
+            input (1darray): _description_
+
+        Returns:
+            tensor: return a tensor base on the previous shape
+        """
         # return our input as a column vector
         return input.reshape(-1,1)
     
@@ -20,3 +28,4 @@ class Flatten(Layer):
     
     def compile(self, optimizer):
         pass
+    

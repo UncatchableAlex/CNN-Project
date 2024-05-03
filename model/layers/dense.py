@@ -9,12 +9,13 @@ class Dense(Layer):
     @override
     # input
     def __init__(self, input_shape, output_shape, activation='sigmoid', bias=0.01):
+        
         self.activation_label = activation
         super().__init__(input_shape, output_shape, activation)
         # each column represents the weights leading into a node in the next layer
         # each row represents the weights from a node in the last layer
-      #  self.w = np.random.uniform(-1, 1, (input_shape[0], output_shape[0]))
-        self.w = np.full((input_shape[0], output_shape[0]), 0.01)
+        self.w = np.random.uniform(-1, 1, (input_shape[0], output_shape[0]))
+        #self.w = np.full((input_shape[0], output_shape[0]), 0.01)
         # add a bias term
         self.b = np.full(output_shape, bias)
         #self.w = w
@@ -27,6 +28,15 @@ class Dense(Layer):
     # returns a column vector which should serve as input to the next layer
     @override
     def forward(self, input):
+        """
+        Performs the forward pass of the model.
+
+        Args:
+            input (tensor): The input tensor to the model.
+
+        Returns:
+            tensor: The output tensor of the model after applying the weights of dense layer and adding the bias.
+        """
         self.input = input
         self.input_activ = self.activation[0](input)
         # apply the activation function and return the forward operation as input to the next layer (if this layer is hidden)
@@ -43,6 +53,15 @@ class Dense(Layer):
     # grad_output this is where we leave off for the night. we are concerned that grad_output is a 1d array that we are going to transpose and it will not end well
     @override
     def backward(self, grad_output):
+        """
+        Performs the backward pass of the dense layer.
+
+        Args:
+            ouput_grad (ndarray): The grad output from previous layer.
+
+        Returns:
+            ndarray: The blame factor 
+        """
         # use the formula from Adam's book (formula 4.28, page 103, Machine Learning by Tom M Mitchell)
         self.blame = self.activation[1](self.input) * (self.w @ grad_output)
         # take a step in grad_output direction (these are the blames from the next layer)

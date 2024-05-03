@@ -17,8 +17,16 @@ class Conv2D(Layer):
         self.bias = np.full(output_shape, bias)
         self.output = np.zeros(output_shape)
     
-    
     def compile(self,optimizer):
+        """
+        Compiles the model with the specified optimizer.
+
+        Args:
+            optimizer (str): The type of optimizer to use. Currently, only 'adam' is supported.
+
+        Raises:
+            Exception: If an unknown optimizer is provided.
+        """
         if optimizer == 'adam':
             self.b_optimizer = Adam()
         else:
@@ -28,6 +36,15 @@ class Conv2D(Layer):
 
     @override
     def forward(self, input):
+        """
+        Performs the forward pass of the model.
+
+        Args:
+            input (tensor): The input tensor to the model.
+
+        Returns:
+            tensor: The output tensor of the model after applying the convolutions and adding the bias.
+        """
         self.input = input
         self.input_activ = self.activation[0](input)
         # convolve each kernel with result of the activation function and the input
@@ -44,6 +61,15 @@ class Conv2D(Layer):
     #  y -> output_grads  (a 2d matrix the same size as our forward prop output)
     #  k-> self.kernels
     def backward(self, output_grads):
+        """
+        Performs the backward pass of the conv2d layer.
+
+        Args:
+            ouput_grad (ndarray): The grad output from previous layer.
+
+        Returns:
+            ndarray: The blame factor 
+        """
         self.blame = np.zeros_like(self.input) if self.blame is None else self.blame
         for j in range(self.blame.shape[0]):
             self.blame[j] = np.sum(np.array([kern.channel_blame(j, output_grad) for kern, output_grad in zip(self.kernels, output_grads)]), axis=0)

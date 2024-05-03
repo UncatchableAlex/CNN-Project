@@ -15,18 +15,48 @@ import h5py # type: ignore
 
 class Sequential:
     def __init__(self):
+        """
+        Initializes the Sequential model.
+        """
         self.layers = []
     
     def add(self, layer):
+        """
+        Adds a layer to the Sequential model.
+
+        Args:
+            layer (Layer): The layer to be added to the model.
+        """
         self.layers.append(layer)
     
     def forward(self, input, index=0):
+        """
+        Performs the forward pass of the Sequential model.
+
+        Args:
+            input (tensor): The input tensor to the model.
+            index (int): The index of the current layer being processed (default is 0).
+
+        Returns:
+            tensor: The output tensor of the model after passing through all layers.
+        """
+        
         if index >= len(self.layers):
             return input
         output = self.layers[index].forward(input)
         return self.forward(output, index + 1)
     
     def backward(self, output, index=None):
+        """
+        Performs the backward pass of the Sequential model.
+
+        Args:
+            output (tensor): The output tensor of the model.
+            index (int): The index of the current layer being processed (default is len(self.layers) - 1).
+
+        Returns:
+            tensor: The gradient tensor after backpropagating through all layers.
+        """
         if index is None:
             index = len(self.layers) - 1
         if index < 0:
@@ -35,11 +65,36 @@ class Sequential:
         return self.backward(grad, index - 1)
 
     def compile(self,optimizer):
+        """
+        Compiles the model with the specified optimizer.
+
+        Args:
+            optimizer (str): The type of optimizer to use. Currently, only 'adam' is supported.
+
+        Raises:
+            Exception: If an unknown optimizer is provided.
+        """
         for layer in self.layers:
             layer.compile(optimizer=optimizer)
 
 
     def preprocess_dataset(self, data_dir, map_dictionary):
+        """
+        Preprocesses the dataset by loading images, matching them with labels, 
+        and splitting into train and validation sets.
+
+        Args:
+            data_dir (str): The directory containing the image files.
+            map_dictionary (dict): A dictionary mapping identifiers to label vectors.
+
+        Returns:
+            tuple: A tuple containing the following elements:
+                - train_images: List of preprocessed training images.
+                - train_labels: List of corresponding labels for training images.
+                - validation_images: List of preprocessed validation images.
+                - validation_labels: List of corresponding labels for validation images.
+                - indices: Array of indices for shuffling the training data.
+        """
         # Get all image file paths
         all_image_files = glob.glob(os.path.join(data_dir, '*.png'))
         if not all_image_files:
@@ -73,6 +128,15 @@ class Sequential:
         return train_images, train_labels, validation_images, validation_labels, indices
 
     def training(self, train_value, train_target, indices, number_of_iteration):
+        """
+        Performs the training process for the model.
+
+        Args:
+            train_value (list): List of training images.
+            train_target (list): List of corresponding labels for training images.
+            indices (array): Array of indices for shuffling the training data.
+            number_of_iteration (int): Number of training iterations.
+        """
         number_of_data = len(train_value)
         for j in range(number_of_iteration):
             # Shuffle the indices array for each iteration
@@ -87,12 +151,21 @@ class Sequential:
                 output = self.forward(input, index=0)
                 print(output)
                 self.backward(output=output)
+                
+                
+            
         
 
     
     
 
     def save(self, file_name):
+        """
+        Save the model to an HDF5 file.
+        
+        Args:
+            file_name (str): The name of the file to save the model to.
+        """
         f = h5py.File(file_name, 'a')
         keys = [f'layer_{i}' for i in range(len(self.layers))]
         types = [str(type(layer)).split('.')[-1].lower()[:-2] for layer in self.layers]
@@ -144,6 +217,15 @@ class Sequential:
 
     @staticmethod
     def load(file_name):
+        """
+        Load a model from an HDF5 file.
+
+        Args:
+            file_name (str): The name of the file to load the model from.
+
+        Returns:
+            Sequential: The loaded model.
+        """
         f = h5py.File(file_name, 'r')
         seq = Sequential()
         layer_types = np.array(f.attrs['layer_types'])
