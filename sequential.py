@@ -120,7 +120,7 @@ class Sequential:
                 layer.attrs['pool_size'] = layer_obj.pool_size
                 layer.attrs['stride'] = layer_obj.stride
             elif layer_type == 'output':
-                layer.attrs['target_vec'] = layer_obj.target_vec
+                layer.attrs['target'] = layer_obj.target
                 layer.attrs['activation'] = layer_obj.activation_label
                 #loss_func = layer.attrs['loss_func'] = layer_obj.loss_func
             elif layer_type == 'input':
@@ -172,10 +172,10 @@ class Sequential:
                 stride = layer.attrs['stride']
                 layer_obj = MaxPool2D(input_shape, output_shape, pool_size, stride)
             elif layer_type == 'output':
-                target_vec = layer.attrs['target_vec']
+                target = layer.attrs['target']
                 activation = layer.attrs['activation']
                 #loss_func = layer.attrs['loss_func']
-                layer_obj = Output(input_shape, output_shape, target_vec, activation)
+                layer_obj = Output(input_shape, output_shape, target, activation)
             elif layer_type == 'input':
                 pass
             elif layer_type == 'flatten':

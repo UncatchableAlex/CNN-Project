@@ -3,6 +3,7 @@ from model.layers.layer import Layer # type: ignore[import-not-found]
 
 class Output(Layer):
     def __init__(self, input_shape, output_shape, target_vec, activation):
+        self.activation_label = activation
         super().__init__(input_shape, output_shape, activation)
         self.target = target_vec
         self.input_shape = input_shape
